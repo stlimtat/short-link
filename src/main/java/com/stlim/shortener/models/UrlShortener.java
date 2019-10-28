@@ -6,12 +6,16 @@ import java.util.Date;
 @Entity
 public class UrlShortener {
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	private String url;
 	private Date createdAt;
 
-	protected UrlShortener() {}
+	@Transient
+	private String shortUrl;
+
+	protected UrlShortener() {
+	}
 
 	public UrlShortener(String url) {
 		this.url = url;
@@ -39,6 +43,14 @@ public class UrlShortener {
 
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
+	}
+
+	public String getShortUrl() {
+		return shortUrl;
+	}
+
+	public void setShortUrl(String shortUrl) {
+		this.shortUrl = shortUrl;
 	}
 
 	@PrePersist
