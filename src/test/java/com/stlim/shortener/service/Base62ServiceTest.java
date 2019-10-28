@@ -1,5 +1,6 @@
 package com.stlim.shortener.service;
 
+import org.apache.commons.validator.ValidatorException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -35,9 +36,8 @@ public class Base62ServiceTest {
 		Assert.assertNotNull(result);
 	}
 
-
 	@Test
-	public void testDecode() {
+	public void testDecode() throws ValidatorException {
 		Long result;
 		result = base62Service.decode("abcde");
 		Assert.assertNotNull(result);
@@ -47,6 +47,13 @@ public class Base62ServiceTest {
 		Assert.assertNotNull(result);
 		result = base62Service.decode("abc");
 		Assert.assertNotNull(result);
+	}
+
+	@Test
+	public void testDecodeNegative() throws ValidatorException {
+		Long result;
+		thrown.expect(ValidatorException.class);
+		result = base62Service.decode(",");
 	}
 
 }

@@ -1,5 +1,6 @@
 package com.stlim.shortener.service;
 
+import org.apache.commons.validator.ValidatorException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -20,12 +21,15 @@ public class Base62Service {
 	}
 
 	// Decodes a shortened URL to its original URL.
-	public Long decode(String s) {
+	public Long decode(String s) throws ValidatorException {
 		Long result = 0L;
 
 		String base62Encoded = s.substring(s.lastIndexOf("/") + 1);
 		for (int i = 0; i < base62Encoded.length(); i++) {
 			result = result * 62 + base62.indexOf("" + base62Encoded.charAt(i));
+		}
+		if (result < 0L) {
+			throw new ValidatorException("decode.invalid.(" + s + ")");
 		}
 
 		return result;
