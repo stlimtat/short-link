@@ -1,6 +1,7 @@
 package com.stlim.shortener.service;
 
 import com.stlim.shortener.jpa.UrlShortenerCrudRepository;
+import com.stlim.shortener.models.AppProperty;
 import com.stlim.shortener.models.UrlShortener;
 import org.apache.commons.validator.ValidatorException;
 import org.apache.commons.validator.routines.UrlValidator;
@@ -13,6 +14,10 @@ import java.util.List;
 public class UrlShortenerServiceImpl implements UrlShortenerService {
 	@Autowired
 	UrlShortenerCrudRepository crudRepository;
+	@Autowired
+	Base62Service base62Service;
+	@Autowired
+	AppProperty appProperty;
 
 	public UrlShortener validateAndSave(String url) throws ValidatorException {
 		UrlShortener result;
@@ -28,12 +33,13 @@ public class UrlShortenerServiceImpl implements UrlShortenerService {
 		if (l.size() > 0) {
 			// There is already an existing url
 			result = l.get(0);
-			resultId = result.getId();
 		} else {
 			// save url if not found
 			result = crudRepository.save(new UrlShortener(url));
-			resultId = result.getId();
 		}
+		result.setShortUrl(
+			appProperty.getUrl() +
+				base62Service.encode(result.getId()));
 
 		return result;
 	}
