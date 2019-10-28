@@ -1,8 +1,5 @@
 package com.stlim.shortener.models;
 
-import com.stlim.shortener.service.Base62Service;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import javax.persistence.*;
 import java.util.Date;
 
@@ -13,10 +10,6 @@ public class UrlShortener {
 	private Long id;
 	private String url;
 	private Date createdAt;
-
-	@Transient
-	@Autowired
-	Base62Service base62Service;
 
 	protected UrlShortener() {}
 
@@ -46,11 +39,6 @@ public class UrlShortener {
 
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
-	}
-
-	// The magic formula
-	public String getShortUrl() {
-		return base62Service.encode(this.id);
 	}
 
 	@PrePersist
