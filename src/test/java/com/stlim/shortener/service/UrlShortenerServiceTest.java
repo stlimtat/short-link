@@ -23,7 +23,7 @@ public class UrlShortenerServiceTest {
 	UrlShortenerService urlShortenerService;
 
 	@Test
-	protected void testUrlShortener() {
+	public void testUrlShortener() {
 		Map<String, Long> test = new HashMap<String, Long>();
 		test.put("http://www.google.com", 1L);
 		test.put("http://www.facebook.com", 2L);
@@ -40,10 +40,26 @@ public class UrlShortenerServiceTest {
 	}
 
 	@Test
-	protected void testUrlShortenerInvalidUrl() throws ValidatorException {
+	public void testUrlShortenerInvalidUrl() throws ValidatorException {
 		exception.expect(ValidatorException.class);
 		UrlShortener result = urlShortenerService.validateAndSave("abcd");
 	}
 
+	@Test
+	public void testUrlShortenerDuplication() {
+		Map<String, Long> test = new HashMap<String, Long>();
+		test.put("http://www.google.com", 1L);
+		test.put("http://www.google.com", 1L);
+
+		for (Map.Entry<String, Long> e : test.entrySet()) {
+			try {
+				UrlShortener result = urlShortenerService.validateAndSave(e.getKey());
+				Assert.assertEquals(result.getId(), e.getValue());
+				Assert.assertEquals(result.getUrl(), e.getKey());
+			} catch (ValidatorException ex) {
+				// Do nothing
+			}
+		}
+	}
 
 }
