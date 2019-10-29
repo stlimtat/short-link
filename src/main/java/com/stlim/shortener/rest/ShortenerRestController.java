@@ -25,7 +25,7 @@ public class ShortenerRestController {
 			result = urlShortenerService.validateAndSave(url);
 		} catch (ValidatorException ex) {
 			throw new ResponseStatusException(
-				HttpStatus.NOT_ACCEPTABLE, "Invalid.Url", ex);
+				HttpStatus.NOT_ACCEPTABLE, "Invalid.Url.(" + url + ")", ex);
 		}
 		return result;
 	}
@@ -40,14 +40,14 @@ public class ShortenerRestController {
 			result = urlShortenerService.getUrlById(id);
 		} catch (ValidatorException ex) {
 			throw new ResponseStatusException(
-				HttpStatus.NOT_ACCEPTABLE, "Invalid.Id", ex);
+				HttpStatus.NOT_ACCEPTABLE, "Invalid.Id.(" + id + ")", ex);
 		}
 
 		if (result != null) {
 			response.sendRedirect(result.getUrl());
 		} else {
 			throw new ResponseStatusException(
-				HttpStatus.NOT_FOUND, "Url.Not.Found");
+				HttpStatus.NOT_FOUND, "Url.Not.Found.(" + id + ")");
 		}
 	}
 
