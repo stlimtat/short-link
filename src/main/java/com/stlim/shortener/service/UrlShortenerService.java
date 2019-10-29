@@ -6,12 +6,12 @@ import com.stlim.shortener.models.UrlShortener;
 import org.apache.commons.validator.ValidatorException;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-@Component
+@Service
 public class UrlShortenerService {
 	@Autowired
 	UrlShortenerCrudRepository crudRepository;

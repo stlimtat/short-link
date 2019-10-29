@@ -1,9 +1,9 @@
 package com.stlim.shortener.service;
 
 import org.apache.commons.validator.ValidatorException;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class Base62Service {
 	String base62 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
