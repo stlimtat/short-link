@@ -6,13 +6,22 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties("shortener")
 public class AppProperty {
-	private String url;
+	private String urlPrefix;
+	private String supportedProtocols;
 
-	public String getUrl() {
-		return url;
+	public String getUrlPrefix() {
+		return urlPrefix;
 	}
 
-	public void setUrl(String url) {
-		this.url = url;
+	public void setUrlPrefix(String urlPrefix) {
+		this.urlPrefix = urlPrefix;
+	}
+
+	public String getSupportedProtocols() {
+		return supportedProtocols;
+	}
+
+	public void setSupportedProtocols(String supportedProtocols) {
+		this.supportedProtocols = supportedProtocols;
 	}
 }
