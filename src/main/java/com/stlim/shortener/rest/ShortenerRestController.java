@@ -20,6 +20,11 @@ public class ShortenerRestController {
 	@Autowired
 	UrlShortenerService urlShortenerService;
 
+	@GetMapping("/")
+	public void index(HttpServletResponse response) throws IOException {
+		response.sendRedirect("/static/index.html");
+	}
+
 	@PostMapping("/shortener")
 	public UrlShortener createUrlShortener(
 		@Valid @RequestBody UrlInputForm urlInputForm
