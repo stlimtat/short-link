@@ -38,7 +38,7 @@ public class ShortenerRestControllerTest {
 		for (String url : params) {
 			MvcResult result = mvc.perform(
 				post("/shortener")
-					.content(url)
+					.content("{\"url\":\"" + url + "\"}")
 					.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andReturn();
@@ -51,12 +51,12 @@ public class ShortenerRestControllerTest {
 		params.add("http://d.com");
 		params.add("https://f.net");
 		params.add("ftp://g.org");
-		params.add("http://a.com"); // Duplicate entry
+		params.add("http://a.org"); // Duplicate entry
 
 		for (String url : params) {
 			MvcResult result = mvc.perform(
 				post("/shortener")
-					.content(url)
+					.content("{\"url\":\"" + url + "\"}")
 					.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpect(content().string(containsString(url)))
@@ -65,17 +65,35 @@ public class ShortenerRestControllerTest {
 	}
 
 	@Test
-	public void testCreateUrlShortenerInvalidUrl() throws Exception {
-		String url = "abcd";
-		MvcResult result = mvc.perform(
-			post("/shortener")
-				.content(url))
-			.andExpect(status().isNotAcceptable())
-			.andExpect(status()
-				.reason(containsString("Invalid.Url.(" + url + ")"))
-			)
-			.andReturn();
+	public void testCreateUrlShortenerBadRequest() throws Exception {
+		List<String> params = new ArrayList<String>();
+		params.add("");
+
+		for (String url : params) {
+			MvcResult result = mvc.perform(
+				post("/shortener")
+					.content(url))
+				.andExpect(status().isBadRequest())
+				.andReturn();
+		}
 	}
+
+	@Test
+	public void testCreateUrlShortenerUnsupportedMediaType() throws Exception {
+		List<String> params = new ArrayList<String>();
+		params.add("{\"url\":\"\"}");
+		params.add("{\"url\":\"abcd\"}");
+		params.add("{\"url\":\",\"}");
+
+		for (String url : params) {
+			MvcResult result = mvc.perform(
+				post("/shortener")
+					.content(url))
+				.andExpect(status().isUnsupportedMediaType())
+				.andReturn();
+		}
+	}
+
 
 	@Test
 	public void testGetUrlById() throws Exception {
