@@ -23,7 +23,9 @@ public class UrlShortenerService {
 	public UrlShortener validateAndSave(String url) throws ValidatorException {
 		UrlShortener result;
 		// check if url is valid
-		UrlValidator urlValidator = new UrlValidator();
+		UrlValidator urlValidator = new UrlValidator(
+			appProperty.getSupportedProtocols().split(",")
+		);
 		if (!urlValidator.isValid(url)) {
 			throw new ValidatorException("urlValidator.isValid.(" + url + ")");
 		}
@@ -39,7 +41,7 @@ public class UrlShortenerService {
 			result = crudRepository.save(new UrlShortener(url));
 		}
 		result.setShortUrl(
-			appProperty.getUrl() +
+			appProperty.getUrlPrefix() +
 				base62Service.encode(result.getId()));
 
 		return result;
