@@ -1,5 +1,7 @@
 package com.stlim.shortener.rest;
 
+import com.stlim.shortener.models.UrlInputForm;
+import com.stlim.shortener.models.UrlShortener;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,14 +33,15 @@ public class ShortenerRestControllerTest {
 	@Before
 	public void setUp() throws Exception {
 		List<String> params = new ArrayList<String>();
-		params.add("http://a.com");
-		params.add("https://b.net");
-		params.add("ftp://c.org");
 
-		for (String url : params) {
+		params.add( "{\"url\":\"http://a.com\"}");
+		params.add( "{\"url\":\"https://b.net\"}");
+		params.add( "{\"url\":\"ftp://c.org\"}");
+
+		for (String s: params) {
 			MvcResult result = mvc.perform(
 				post("/shortener")
-					.content("{\"url\":\"" + url + "\"}")
+					.content(s)
 					.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andReturn();
@@ -48,18 +51,18 @@ public class ShortenerRestControllerTest {
 	@Test
 	public void testCreateUrlShortener() throws Exception {
 		List<String> params = new ArrayList<String>();
-		params.add("http://d.com");
-		params.add("https://f.net");
-		params.add("ftp://g.org");
-		params.add("http://a.org"); // Duplicate entry
+		params.add( "{\"url\":\"http://e.com\"}");
+		params.add( "{\"url\":\"https://f.net\"}");
+		params.add( "{\"url\":\"ftp://g.org\"}");
+		params.add( "{\"url\":\"http://e.com\"}"); // Duplicate
+		params.add( "{\"url\":\"https://h.net\",\"short-link\":\"foobar\"}");
 
-		for (String url : params) {
+		for (String s: params) {
 			MvcResult result = mvc.perform(
 				post("/shortener")
-					.content("{\"url\":\"" + url + "\"}")
+					.content(s)
 					.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(url)))
 				.andReturn();
 		}
 	}
@@ -84,6 +87,8 @@ public class ShortenerRestControllerTest {
 		params.add("{\"url\":\"\"}");
 		params.add("{\"url\":\"abcd\"}");
 		params.add("{\"url\":\",\"}");
+		params.add("{\"url\":\"http://i.com\",\"short-url\":\"fooba\"}");
+		params.add("{\"url\":\"http://j.com\",\"short-url\":\",\"}");
 
 		for (String url : params) {
 			MvcResult result = mvc.perform(
