@@ -6,7 +6,7 @@ import java.util.Date;
 @Entity
 public class UrlShortener {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String url;
 	private Date createdAt;

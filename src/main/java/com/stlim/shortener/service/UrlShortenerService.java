@@ -2,6 +2,7 @@ package com.stlim.shortener.service;
 
 import com.stlim.shortener.jpa.UrlShortenerCrudRepository;
 import com.stlim.shortener.models.AppProperty;
+import com.stlim.shortener.models.UrlInputForm;
 import com.stlim.shortener.models.UrlShortener;
 import org.apache.commons.validator.ValidatorException;
 import org.apache.commons.validator.routines.UrlValidator;
@@ -20,25 +21,31 @@ public class UrlShortenerService {
 	@Autowired
 	AppProperty appProperty;
 
-	public UrlShortener validateAndSave(String url) throws ValidatorException {
+	public UrlShortener validateAndSave(UrlInputForm urlInputForm) throws ValidatorException {
 		UrlShortener result;
 		// check if url is valid
 		UrlValidator urlValidator = new UrlValidator(
 			appProperty.getSupportedProtocols().split(",")
 		);
-		if (!urlValidator.isValid(url)) {
-			throw new ValidatorException("urlValidator.isValid.(" + url + ")");
+		if (!urlValidator.isValid(urlInputForm.getUrl())) {
+			throw new ValidatorException("urlValidator.isValid.(" + urlInputForm.getUrl() + ")");
 		}
 
 		// check if url already exists in db
 		Long resultId;
-		List<UrlShortener> l = crudRepository.findByUrl(url);
+		List<UrlShortener> l = crudRepository.findByUrl(urlInputForm.getUrl());
 		if (l.size() > 0) {
 			// There is already an existing url
 			result = l.get(0);
 		} else {
+			// If short-link is provided, then we want to insert in the short-link id location
+			UrlShortener urlShortener = new UrlShortener(urlInputForm.getUrl());
+			if (!urlInputForm.getShortLink().isEmpty()) {
+				Long id = base62Service.decode(urlInputForm.getShortLink());
+				urlShortener.setId(id);
+			}
 			// save url if not found
-			result = crudRepository.save(new UrlShortener(url));
+			result = crudRepository.save(urlShortener);
 		}
 		result.setShortUrl(
 			appProperty.getUrlPrefix() +

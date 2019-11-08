@@ -1,5 +1,6 @@
 package com.stlim.shortener.service;
 
+import com.stlim.shortener.models.UrlInputForm;
 import com.stlim.shortener.models.UrlShortener;
 import org.apache.commons.validator.ValidatorException;
 import org.junit.Assert;
@@ -24,15 +25,17 @@ public class UrlShortenerServiceTest {
 
 	@Test
 	public void testUrlShortener() {
-		Map<String, Long> test = new HashMap<String, Long>();
-		test.put("http://www.google.com", 1L);
-		test.put("http://www.facebook.com", 2L);
+		Map<UrlInputForm, Long> test = new HashMap<UrlInputForm, Long>();
+		test.put(new UrlInputForm("http://www.google.com", ""), 1L);
+		test.put(new UrlInputForm("http://www.facebook.com", ""), 2L);
+		test.put(new UrlInputForm("http://www.internet.com", "foobar"), 14102387347L);
 
-		for (Map.Entry<String, Long> e : test.entrySet()) {
+		for (Map.Entry<UrlInputForm, Long> e : test.entrySet()) {
 			try {
 				UrlShortener result = urlShortenerService.validateAndSave(e.getKey());
 				Assert.assertEquals(result.getId(), e.getValue());
-				Assert.assertEquals(result.getUrl(), e.getKey());
+				Assert.assertEquals(result.getUrl(), e.getKey().getUrl());
+				Assert.assertTrue(result.getShortUrl().contains(e.getKey().getShortLink()));
 			} catch (ValidatorException ex) {
 				// Do nothing
 			}
@@ -42,24 +45,24 @@ public class UrlShortenerServiceTest {
 	@Test
 	public void testUrlShortenerInvalidUrl() throws ValidatorException {
 		exception.expect(ValidatorException.class);
-		UrlShortener result = urlShortenerService.validateAndSave("abcd");
+		UrlShortener result = urlShortenerService.validateAndSave(new UrlInputForm("abcd", ""));
 	}
 
 	@Test
 	public void testUrlShortenerDuplication() {
-		Map<String, Long> test = new HashMap<String, Long>();
-		test.put("http://www.google.com", 1L);
-		test.put("http://www.google.com", 1L);
+		Map<UrlInputForm, Long> test = new HashMap<UrlInputForm, Long>();
+		test.put(new UrlInputForm("http://www.google.com", ""), 1L);
+		test.put(new UrlInputForm("http://www.google.com", ""), 1L);
+		test.put(new UrlInputForm("http://www.google.com", "foobar"), 1L);
 
-		for (Map.Entry<String, Long> e : test.entrySet()) {
+		for (Map.Entry<UrlInputForm, Long> e : test.entrySet()) {
 			try {
 				UrlShortener result = urlShortenerService.validateAndSave(e.getKey());
 				Assert.assertEquals(result.getId(), e.getValue());
-				Assert.assertEquals(result.getUrl(), e.getKey());
+				Assert.assertEquals(result.getUrl(), e.getKey().getUrl());
 			} catch (ValidatorException ex) {
 				// Do nothing
 			}
 		}
 	}
-
 }

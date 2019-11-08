@@ -31,7 +31,7 @@ public class ShortenerRestController {
 		) {
 		UrlShortener result;
 		try {
-			result = urlShortenerService.validateAndSave(urlInputForm.getUrl());
+			result = urlShortenerService.validateAndSave(urlInputForm);
 		} catch (ValidatorException ex) {
 			throw new ResponseStatusException(
 				HttpStatus.NOT_ACCEPTABLE, "Invalid.Url.(" + urlInputForm.getUrl() + ")", ex);
